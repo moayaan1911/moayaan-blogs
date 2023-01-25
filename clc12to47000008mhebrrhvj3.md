@@ -1,6 +1,6 @@
 # Why ETHEREUM Always Wins!
 
-# Ethereum Killers
+# Ethereum Killers!
 
 ![](https://cdn.hashnode.com/res/hashnode/image/upload/v1671832875389/e10cb165-157e-40f4-bf23-451803a8c36a.jpeg align="center")
 
