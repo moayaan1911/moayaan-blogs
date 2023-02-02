@@ -27,41 +27,129 @@ One of the main disadvantages of SBTs is that they are not as versatile as NFTs.
 Here is an example of a Solidity code for a Soulbound Token:
 
 ```solidity
-pragma solidity ^0.8.0;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.13;
+
+/**
+ * An experiment in Soul Bound Tokens (SBT's) following Vitalik's
+ * co-authored whitepaper at:
+ * https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4105763
+ *
+ * I propose for a rename to Non-Transferable Tokens NTT's
+ */
 
 contract SBT {
-mapping (address => uint) public balanceOf;
-address public owner;
 
-constructor() public {
-owner = msg.sender;
-}
+    struct Soul {
+        string identity;
+        // add issuer specific fields below
+        string url;
+        uint256 score;
+        uint256 timestamp;
+    }
 
-function transfer(address _to, uint _value) public {
-require(msg.sender == owner, "Only the owner can transfer the SBT.");
-balanceOf[_to] = _value;
+    mapping (address => Soul) private souls;
+    mapping (address => mapping (address => Soul)) soulProfiles;
+    mapping (address => address[]) private profiles;
+
+    string public name;
+    string public ticker;
+    address public operator;
+    bytes32 private zeroHash = 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470;
+    
+    event Mint(address _soul);
+    event Burn(address _soul);
+    event Update(address _soul);
+    event SetProfile(address _profiler, address _soul);
+    event RemoveProfile(address _profiler, address _soul);
+
+    constructor(string memory _name, string memory _ticker) {
+      name = _name;
+      ticker = _ticker;
+      operator = msg.sender;
+    }
+
+    function mint(address _soul, Soul memory _soulData) external {
+        require(keccak256(bytes(souls[_soul].identity)) == zeroHash, "Soul already exists");
+        require(msg.sender == operator, "Only operator can mint new souls");
+        souls[_soul] = _soulData;
+        emit Mint(_soul);
+    }
+
+    function burn(address _soul) external {
+        require(msg.sender == _soul || msg.sender == operator, "Only users and issuers have rights to delete their data");
+        delete souls[_soul];
+        for (uint i=0; i<profiles[_soul].length; i++) {
+            address profiler = profiles[_soul][i];
+            delete soulProfiles[profiler][_soul];
+        }
+        emit Burn(_soul);
+    }
+
+    function update(address _soul, Soul memory _soulData) external {
+        require(msg.sender == operator, "Only operator can update soul data");
+        require(keccak256(bytes(souls[_soul].identity)) != zeroHash, "Soul does not exist");
+        souls[_soul] = _soulData;
+        emit Update(_soul);
+    }
+
+    function hasSoul(address _soul) external view returns (bool) {
+        if (keccak256(bytes(souls[_soul].identity)) == zeroHash) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    function getSoul(address _soul) external view returns (Soul memory) {
+        return souls[_soul];
+    }
+
+    /**
+     * Profiles are used by 3rd parties and individual users to store data.
+     * Data is stored in a nested mapping relative to msg.sender
+     * By default they can only store data on addresses that have been minted
+     */
+    function setProfile(address _soul, Soul memory _soulData) external {
+        require(keccak256(bytes(souls[_soul].identity)) != zeroHash, "Cannot create a profile for a soul that has not been minted");
+        soulProfiles[msg.sender][_soul] = _soulData;
+        profiles[_soul].push(msg.sender);
+        emit SetProfile(msg.sender, _soul);
+    }
+
+    function getProfile(address _profiler, address _soul) external view returns (Soul memory) {
+        return soulProfiles[_profiler][_soul];
+    }
+
+    function listProfiles(address _soul) external view returns (address[] memory) {
+        return profiles[_soul];
+    }
+
+    function hasProfile(address _profiler, address _soul) external view returns (bool) {
+        if (keccak256(bytes(soulProfiles[_profiler][_soul].identity)) == zeroHash) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    function removeProfile(address _profiler, address _soul) external {
+        require(msg.sender == _soul, "Only users have rights to delete their profile data");
+        delete soulProfiles[_profiler][msg.sender];
+        emit RemoveProfile(_profiler, _soul);
+    }
 }
 ```
 
 ### Explanation of the Code
 
-1. "pragma solidity ^0.8.0;" - This line specifies the version of the Solidity compiler to be used to compile this code. The "^" symbol indicates that any version of 0.8.0 or higher can be used.
+* A soul has the following data fields: identity, url, score, and timestamp. The contract maintains a mapping of address to soul and a mapping of address to a mapping of address to soul, which allows for creating profiles for each soul by third parties and individual users.
     
-2. "contract SBT " - This line starts the definition of a smart contract named "SBT".
+* The contract implements several functions for managing souls, including: mint, burn, update, and hasSoul. The mint function creates a new soul and assigns it to a given Ethereum address. The burn function deletes a soul and all associated profiles. The update function allows the operator to modify an existing soul's data. The hasSoul function returns a boolean indicating if a soul exists for a given address.
     
-3. "mapping (address =&gt; uint) public balanceOf;" - This line defines a public mapping named "balanceOf" that maps from an Ethereum address to an unsigned integer (uint). This will be used to store the balance of SBT for each address.
+* The contract also implements functions for managing profiles, including: setProfile, getProfile, listProfiles, hasProfile, and removeProfile. The setProfile function creates a profile for a soul by a third party or individual user. The getProfile function retrieves a profile for a soul. The listProfiles function lists all the profiles associated with a soul. The hasProfile function returns a boolean indicating if a profile exists for a soul by a given profiler. The removeProfile function allows the user to delete their profile.
     
-4. "address public owner;" - This line defines a public address named "owner". This will be used to store the address of the owner of the SBT contract.
-    
-5. "constructor() public " - This line starts the definition of the constructor of the "SBT" contract. The "public" keyword makes the constructor publicly accessible.
-    
-6. "owner = msg.sender;" - In the constructor, the "owner" is set to the address of the sender of the transaction that creates the contract. This address will be the owner of the SBT contract.
-    
-7. "function transfer(address *to, uint* value) public " - This line starts the definition of a public function named "transfer". The function takes two arguments: an address "to" and an unsigned integer "value".
-    
-8. "require(msg.sender == owner, "Only the owner can transfer the SBT.");" - This line checks if the sender of the transaction is equal to the owner. If not, it will throw an error with the message "Only the owner can transfer the SBT.".
-    
-9. "balanceOf\[\_to\] = \_value;" - If the sender is the owner, then this line updates the balance of SBT for the address "to" with the value "value".
+* The contract emits events for important actions, such as minting, burning, updating, setting, and removing profiles. The contract is licensed under the MIT License.
     
 
 ## SBT and Ethereum
