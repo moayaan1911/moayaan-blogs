@@ -12,7 +12,7 @@ OpenAI, the company behind the popular language model ChatGPT, has unveiled a ne
 
 **What is SORA?**
 
-%[https://x.com/sama/status/1758224107852931344?s=20] 
+%[https://techcrunch.com/2024/02/15/openais-newest-model-can-generate-videos-and-they-look-decent/] 
 
 SORA is a generative AI model that can create videos from scratch, based on a text description. The model is trained on a massive dataset of text and video pairs, and it is able to learn the relationships between text and video. This allows SORA to generate videos that are not only realistic but also creative and imaginative.
 
@@ -22,7 +22,7 @@ When you give SORA a text description, it first processes the text to understand
 
 **The potential of SORA**
 
-%[https://x.com/OpenAI/status/1758192957386342435?s=20] 
+%[https://venturebeat.com/ai/openai-unveils-video-ai-model-sora-capable-of-generating-60-second-videos/] 
 
 SORA has the potential to revolutionize the way we create videos. It can be used to create a wide variety of videos, including:
 
