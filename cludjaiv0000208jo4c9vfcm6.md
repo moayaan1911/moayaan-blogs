@@ -1,8 +1,8 @@
 ---
-title: "BlackRock's entering Crypto"
+title: "BlackRock entering Crypto"
 datePublished: Sat Mar 30 2024 03:29:40 GMT+0000 (Coordinated Universal Time)
 cuid: cludjaiv0000208jo4c9vfcm6
-slug: blackrocks-entering-crypto
+slug: blackrock-entering-crypto
 cover: https://cdn.hashnode.com/res/hashnode/image/upload/v1711769235357/e0c38aeb-aa3c-454e-96aa-c665c7ceb84c.webp
 tags: bitcoin, cryptocurrency, ethereum, tokenization, web3, blackrock-fidelity-grayscale-bitcoin-trustcrypto-web-stories-latest-crypto-news-web-stories-crypto-news-webstories-news-on-crypto-web-stories, rwa-tokenization
 
