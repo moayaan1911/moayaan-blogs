@@ -4,6 +4,7 @@ datePublished: Sun Apr 28 2024 00:27:41 GMT+0000 (Coordinated Universal Time)
 cuid: clvisk77e00150ajlfy2cgif9
 slug: the-blockchain-testnet-crisis
 cover: https://cdn.hashnode.com/res/hashnode/image/upload/v1714263836272/720dbcb3-2cb0-46ae-9a17-d2380b770cd2.png
+ogImage: https://cdn.hashnode.com/res/hashnode/image/upload/v1714264521929/a441ef45-6b1f-484d-b2d2-1a59c4ce1543.png
 tags: blockchain, bitcoin, cryptocurrency, ethereum, solidity, web3, faucet, testnet
 
 ---
